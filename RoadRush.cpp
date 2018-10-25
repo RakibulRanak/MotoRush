@@ -1,4 +1,4 @@
-#include<SFML/Graphics.hpp>
+ #include<SFML/Graphics.hpp>
 #include<bits/stdc++.h>
 using namespace std;
 using namespace sf;
@@ -43,10 +43,16 @@ int main()
 
     Texture texture1, texture2;
     Sprite sprite, sprite1;
+    texture1.loadFromFile("carswe.png");
+    sprite.setTexture(texture1);
+    sprite.setPosition(440,600);
+    sprite.setScale(0.6f, 0.6f);
     texture2.loadFromFile("architecture-buildings-city-164583.png");
     sprite1.setTexture(texture2);
     sprite1.setScale(0.3f, 0.16f);
     sprite1.setPosition(-100,0);
+
+    int pos = 0;
 
     vector<Line> lines;
     for(int i=0; i<10000; i++)
@@ -55,6 +61,7 @@ int main()
         line.z = i * segl;
         lines.push_back(line);
     }
+    int playerx = 440;
 
     while(Window.isOpen())
     {
@@ -64,12 +71,20 @@ int main()
             if(e.type == Event::Closed)
                 Window.close();
         }
+        if(Keyboard::isKeyPressed(Keyboard::Right))
+            playerx += 5;
+        if(Keyboard::isKeyPressed(Keyboard::Left ))
+            playerx -= 5;
+
+         pos += 50;
+         sprite.setPosition(playerx, 610);
+          int startpos = pos/segl;
 
         /// draw road
-        for(int n=0; n<300; n++)
+        for(int n = startpos; n < startpos + 300; n++)
         {
             Line &l = lines[n];
-            l.project(0, 1500,0);
+            l.project(0, 1500, pos);
             Color grass = (n/3)%2?Color(0, 0, 0):Color(0, 0, 0);
             Color rumble = (n/3)%2?Color(0, 0, 0):Color::Yellow;
             Color road = (n/3)%2?Color(107, 107, 107):Color(105, 105, 105);
@@ -80,6 +95,7 @@ int main()
             drawquad(Window, rumble, p.X, p.Y, p.W*1.2, l.X, l.Y, l.W*1.2);
             drawquad(Window, road, p.X, p.Y, p.W, l.X, l.Y, l.W);
             drawquad(Window, div,p.X, p.Y, p.W*0.1, l.X, l.Y, l.W*0.1 );
+
         }
 
         Window.draw(sprite1);
